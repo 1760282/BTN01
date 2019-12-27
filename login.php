@@ -1,38 +1,93 @@
 <?php 
-require_once 'init.php';
-$success = true;
-if (!empty($_POST['email']) && !empty($_POST['password'])) {  
-  $user = findUserByEmail($_POST['email']);
-  if ($user) {
-    if (password_verify($_POST['password'], $user['password'])) {
-      $success = true;
-      $_SESSION['userId'] = $user['id'];
-      header('Location: index.php');
-      exit();
-    } else {
-      $success = false;
-    }      
-  } else {
-    $success = false;
-  }
-}
+  require_once 'init.php';
 ?>
-<?php include 'header.php' ?>
-<h1>Đăng nhập</h1>
-  <?php if (!$success) : ?>
-  <div class="alert alert-danger" role="alert">
-    Email và mật khẩu không hợp lệ vui lòng đăng nhập lại!
-  </div>
-  <?php endif; ?>
-<form method="POST">
-  <div class="form-group">
-    <label for="email">Địa chỉ email</label>
-    <input type="email" class="form-control" id="email" name="email" placeholder="Điền email vào đây" value="<?php echo isset($_POST['email']) ? $_POST['email'] : '' ?>">
-  </div>
-  <div class="form-group">
-    <label for="password">Mật khẩu</label>
-    <input type="password" class="form-control" id="password" name="password" placeholder="Điền mật khẩu vào đây">
-  </div>
-  <button type="submit" class="btn btn-primary">Đăng nhập</button>
-</form>
-<?php include 'footer.php' ?>
+<?php include 'header.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Login</title>
+	<style>
+		.container h1 
+		{
+			text-align: center;
+			text-transform: uppercase;
+			margin-top: 10px
+		}
+
+		input[type=text] {width: 60%;}
+		label {font-size: "2"; font-family: Times New Roman;}
+		a { font-size:110%;font-weight:bold;font-family: Times New Roman;};
+		.box{
+        font-size: 20px;
+        width:300px;
+        height:300px;
+        padding: 50px;
+        border:10px solid black;}
+        .textarea {
+		  width: 50%;
+		  height: 330px;
+		  padding: 12px 20px;
+		  box-sizing: border-box;
+		  border: 2px solid #ccc;
+		  border-radius: 4px;
+		  background-color: #f8f8f8;
+		  resize: none;
+		}
+		.left {
+       text-align: justify;
+    }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1 style="font-family:Georgia;">Đăng Nhập</h1>
+		<?php if (isset($_POST['Email']) && isset($_POST['Password'])): ?>
+		<?php 
+			$Email = $_POST['Email'];
+			$Password = $_POST['Password'];
+			$success = false;
+			
+			$user = findUserByEmail($Email);
+
+		
+			if ($user && password_verify($Password,$user[0]['password']))
+			{
+				$success = true;
+				$_SESSION ['userID'] = $user[0]['id'];
+			}
+		?>
+		<?php if ($success): ?>
+		<?php header('Location: home.php'); ?>
+		<?php else: ?>
+		<div class="alert alert-danger" role = "alert">
+			Đăng nhập Không thành công!!Mời đăng nhập lại :)
+			<a href="index.php"><b>Quay lại</b></a><br>
+		</div>
+		<?php endif; ?>
+		<?php else: ?>			
+		<form action="login.php" method="POST" class="was-validated">
+			<fieldset class="textarea">
+				<legend><center>Login Information:</center></legend>
+				<p class = "left">
+				<div class="form-group">
+					<input type="email" class="form-control" id="Email" placeholder="Nhập Email của bạn" name="Email" required>
+					<div class="valid-feedback">Thành công.</div>
+      				<div class="invalid-feedback">Vui lòng điền vào trường này.</div>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" id="Password" placeholder="Nhập vào Password " name="Password" required>
+					<div class="valid-feedback">Thành công.</div>
+      				<div class="invalid-feedback">Vui lòng điền vào trường này.</div>
+				</div>
+				<button type="Submit" class="btn btn-success"><b>Đăng Nhập</b></button>&emsp;		
+				<a href="index.php"><b>Hủy</b></a><br>
+				<a href="forgotPassword.php">Quên Mật Khẩu?</a></p>
+			</fieldset>
+		</form></center>
+	</div>
+</body>
+</html>
+<?php endif; ?>
+<hr>
+<?php include 'footer.php'; ?>
